@@ -1,0 +1,125 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+
+<dom-module id="hemeaki-firebase-upload">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <div>
+      <p class="paragraphs">Logo</p>
+      <iron-image
+        id="image"
+        width="[[imageWidth]]"
+        height="[[imageHeight]]"
+        src="{{imageUrl}}" 
+        preload sizing="cover"
+        placeholder="../assets/user.jpeg"></iron-image>
+
+      <dom-if if="[[showLoader]]">
+        <template>
+          <paper-progress indeterminate></paper-progress>
+        </template>
+      </dom-if>
+
+      <br>
+
+      <paper-button class="gray-btn" id="uploadbtn">
+        <label for="image-uploader">Subir</label>
+      </paper-button>
+      <paper-button class="gray-btn" id="changebtn" hidden>
+        <label for="image-uploader">Cambiar</label>
+      </paper-button>
+      <input id="image-uploader" type="file" on-change="onimageUpload" style="display:none" />
+    </div>
+
+  </template>
+
+  <script>
+    class HemeakiFirebaseUpload extends Polymer.Element {
+
+      static get is() {
+        return 'hemeaki-firebase-upload';
+      }
+
+      static get properties() {
+        return {
+          imageWidth: {
+            type: String,
+            value: '200'
+          },
+
+          imageHeight: {
+            type: String,
+            value: '200'
+          },
+
+          imageUrl: {
+            type: String,
+            observer: 'urlChanged'
+          },
+
+          folderName: String,
+
+          showLoader: {
+            type: Boolean,
+            value: false
+          },
+
+          fullPath: {
+            type: String,
+            value: ''
+          }
+        };
+      }
+
+      onimageUpload(e) {
+        if (this.fullPath !== '') {
+          // Create a reference to the file to delete
+          let dinnerRef = firebase.storage().ref(this.fullPath);
+          // Delete the file
+          dinnerRef.delete().then(() => {
+            console.log('Borrado con éxito');
+            this.imageUrl = '../assets/user.jpeg';
+          }).catch(function (error) {
+            console.log('Uh-oh, an error occurred!');
+          });
+        }
+        
+        this.showLoader = true;
+        let file = e.target.files[0];
+        let refName = `${this.folderName}/${file.name}`; 
+        let storageRef = firebase.storage().ref(refName);
+        let task = storageRef.put(file);
+
+        task.on('state_changed',
+          function progress(snapshot) {
+            console.log('Subida en proceso...');
+          },
+
+          function error(err) {
+            console.error('Ha ocurrido un error')
+          }, () => {
+            this.imageUrl = task.snapshot.downloadURL;
+            this.fullPath = task.snapshot.metadata.fullPath;
+            this.$.uploadbtn.hidden = true;
+            this.$.changebtn.hidden = false;
+            this.showLoader = false;
+          }
+        );
+      }
+
+      urlChanged(newValue) {
+        this.dispatchEvent(new CustomEvent('image-url-settled', {
+          detail: {
+            url: newValue
+          }
+        }));
+      }
+    }
+    window.customElements.define(HemeakiFirebaseUpload.is, HemeakiFirebaseUpload);
+  </script>
+</dom-module>

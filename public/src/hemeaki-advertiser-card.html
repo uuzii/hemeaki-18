@@ -35,6 +35,11 @@
       .paragraph-lil-margin {
         margin: 0 0 10px 0;
       }
+
+      .actions-div {
+        display: flex;
+        justify-content: space-between;
+      }
     </style>
 
     <div class="card-container">
@@ -45,6 +50,17 @@
         <h3>[[advertiserData.name]]</h3>
         <p class="paragraph-lil-margin">[[advertiserData.description]]</p>
         <p class="gray-text small-text">[[advertiserData.address]]</p>
+        <dom-if if="[[adminMode]]">
+          <template>
+            <p class="gray-text small-text">[[advertiserData.email]]</p>
+            <p class="gray-text small-text">[[advertiserData.tel]]</p>
+            <p class="gray-text small-text">[[advertiserData.facebookName]]</p>
+            <div class="actions-div">
+              <paper-icon-button icon="create" on-tap="editBtnTapped" data="[[advertiserData]]" disabled></paper-icon-button>
+              <paper-icon-button icon="delete" class="delete-btn" on-tap="deleteBtnTapped" data="[[advertiserData]]"></paper-icon-button>
+            </div>
+          </template>
+        </dom-if>
       </div>
     </div>
 
@@ -59,8 +75,29 @@
 
       static get properties() {
         return {
-          advertiserData: Object
+          advertiserData: Object,
+
+          adminMode: {
+            type: Boolean,
+            value: false
+          }
         };
+      }
+
+      editBtnTapped(event) {
+        this.dispatchEvent(new CustomEvent('edit-btn-tapped', {
+          detail: {
+            slug: event.target.data.slug
+          }
+        }));
+      }
+
+      deleteBtnTapped(event) {
+        this.dispatchEvent(new CustomEvent('delete-btn-tapped', {
+          detail: {
+            slug: event.target.data.slug
+          }
+        }));
       }
 
     }

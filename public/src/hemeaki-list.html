@@ -61,11 +61,15 @@
       }
 
       _computeUrl(route) {
-        return `https://hemeaki-api.herokuapp.com/api/${this.toSlug(route.path.slice(1))}/advertisers`;
+        if(route.path !== null) {
+          return `https://hemeaki-api.herokuapp.com/api/${this.toSlug(route.path.slice(1))}/advertisers`;
+        }
       }
 
       _computeCategoryName(route) {
-        return route.path.slice(1);
+        if(route.path !== null) {
+          return route.path.slice(1);
+        }
       }
 
       toSlug(s) {

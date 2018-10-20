@@ -1,13 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="es">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Hemeaki</title>
-
-  <link rel="import" href="src/hemeaki-app.html">
+  <meta charset="utf-8">
+  <base href="/">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+  <title>HemeAki</title>
+  <link rel="icon" href="/assets/logo-bar.png">
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <meta name="description" content="Sitio de recomendaciones de productos y servicios">
+  <link rel="manifest" href="/manifest.json">
 
   <style>
     body {
@@ -16,11 +18,73 @@
       font-family: 'Roboto', sans-serif;
       font-size: 16px;
     }
+
+    hemeaki-app[unresolved] {
+      display: block;
+      min-height: 101vh;
+    }
+
+    #skeleton .header {
+      text-align: center;
+      margin-top: calc(50vh - 30px);
+    }
+
+    .loader {
+      display: inline-block;
+      margin-top: 1em;
+      border: 5px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 5px solid #E8172B;
+      width: 50px;
+      height: 50px;
+      -webkit-animation: spin 2s linear infinite;
+      animation: spin 2s linear infinite;
+    }
+
+    @-webkit-keyframes spin {
+      0% {
+        -webkit-transform: rotate(0deg);
+      }
+
+      100% {
+        -webkit-transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
   </style>
+
 </head>
 
 <body>
-  <hemeaki-app></hemeaki-app>
+  <div id="skeleton">
+    <div class="header">
+      <div class="loader"></div>
+    </div>
+  </div>
+
+  <hemeaki-app unresolved></hemeaki-app>
+
+  <script>
+    document.querySelector('hemeaki-app').addEventListener('app-ready', function (e) {
+      document.querySelector('div').remove();
+    });
+  </script>
+
+  <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+  <link rel="import" href="/src/hemeaki-app.html">
+
+  <script>
+    window.performance && performance.mark && performance.mark('index.html');
+  </script>
 </body>
 
 </html>

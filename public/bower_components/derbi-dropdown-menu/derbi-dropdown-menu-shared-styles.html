@@ -1,0 +1,157 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../paper-styles/default-theme.html">
+
+<dom-module id="derbi-dropdown-menu-shared-styles">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+        position: relative;
+        text-align: left;
+
+        /* NOTE(cdata): Both values are needed, since some phones require the
+         * value to be `transparent`.
+         */
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+        -webkit-tap-highlight-color: transparent;
+
+        --paper-input-container-input: {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          max-width: 100%;
+          box-sizing: border-box;
+          cursor: pointer;
+        };
+
+        @apply --derbi-dropdown-menu;
+      }
+
+      :host([disabled]) {
+        @apply --derbi-dropdown-menu-disabled;
+      }
+
+      :host([noink]) paper-ripple {
+        display: none;
+      }
+
+      :host([no-label-float]) paper-ripple {
+        top: 8px;
+      }
+
+      .dropdown-trigger {
+        @apply --layout-horizontal;
+        @apply --layout-center;
+
+        @apply --derbi-dropdown-menu-dropdown-trigger;
+      }
+
+      paper-ripple {
+        @apply --derbi-dropdown-menu-ripple;
+      }
+
+      label {
+        flex: 1 1 auto;
+        padding: 8px 0;
+
+        @apply --derbi-dropdown-menu-label;
+      }
+
+      paper-menu-button {
+        display: block;
+        padding: 0;
+
+        @apply --derbi-dropdown-menu-button;
+      }
+
+      paper-input {
+        text-align: right;
+        flex: 1 1 auto;
+        --paper-input-container-underline: {
+          display: none;
+        };
+        --paper-input-container-underline-focus: {
+          display: none;
+        };
+
+        @apply --derbi-dropdown-menu-input;
+      }
+
+      iron-icon {
+        color: var(--disabled-text-color);
+
+        @apply --derbi-dropdown-menu-icon;
+      }
+
+      iron-icon[hidden] {
+        display: none !important;
+        visibility: hidden;
+      }
+
+      .underline {
+        height: 2px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        @apply --derbi-dropdown-menu-underline-container;
+      }
+
+      .focused-line {
+        @apply --layout-fit;
+        border-bottom: 2px solid var(--derbi-dropdown-menu-focus-color, var(--primary-color));
+        -webkit-transform-origin: center center;
+        transform-origin: center center;
+        -webkit-transform: scale3d(0,1,1);
+        transform: scale3d(0,1,1);
+        @apply --derbi-dropdown-menu-underline-focus;
+      }
+
+      .underline.is-highlighted .focused-line {
+        -webkit-transform: none;
+        transform: none;
+        -webkit-transition: -webkit-transform 0.25s;
+        transition: transform 0.25s;
+        @apply --paper-transition-easing;
+      }
+
+      .underline.is-invalid .focused-line {
+        border-color: var(--derbi-dropdown-menu-invalid-color, var(--error-color));
+        -webkit-transform: none;
+        transform: none;
+        -webkit-transition: -webkit-transform 0.25s;
+        transition: transform 0.25s;
+        @apply --paper-transition-easing;
+      }
+
+      .unfocused-line {
+        @apply --layout-fit;
+        border-bottom: 1px solid var(--derbi-dropdown-menu-color, var(--secondary-text-color));
+        @apply --derbi-dropdown-menu-underline;
+      }
+
+      :host([disabled]) .unfocused-line {
+        border-bottom: 1px dashed;
+        border-color: var(--derbi-dropdown-menu-color, var(--secondary-text-color));
+        @apply --derbi-dropdown-menu-underline-disabled;
+      }
+
+      :host([disabled]) .focused-line {
+        border-bottom: 1px solid var(--derbi-dropdown-menu-color, var(--secondary-text-color));
+
+        @apply  --derbi-dropdown-menu-underline-disabled-focused;
+      }
+    </style>
+  </template>
+</dom-module>

@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="hemeaki-admin-add-advertisers.html">
 <link rel="import" href="hemeaki-admin-advertisers.html">
 <link rel="import" href="hemeaki-admin-categories.html">
 <link rel="import" href="hemeaki-admin-contacts.html">
@@ -50,19 +49,17 @@
       <div class="container">
         <h1>Panel de administrador</h1>
         <div class="panel-space">
-          <div class="side-menu">
+          <div class="side-menu center">
             <iron-selector attr-for-selected="name" selected="{{selectedTab}}">
               <paper-button class="gray-btn full-btn" name="contacts">Bandeja de contactos</paper-button> <br>
               <paper-button class="gray-btn full-btn" name="advertisers">Lista de anunciantes</paper-button> <br>
-              <paper-button class="gray-btn full-btn" name="categories">Lista de categorías</paper-button> <br>
-              <paper-button class="gray-btn full-btn" name="add-advertisers">Añadir anunciante</paper-button>
+              <paper-button class="gray-btn full-btn" name="categories">Lista de categorías</paper-button>
             </iron-selector>
+            <paper-button class="red-text" on-tap="logout">Cerrar sesión</paper-button>
           </div>
           <div class="panel-box">
-            <iron-pages attr-for-selected="name" selected="{{selectedTab}}" fallback-selection="categories">
-              <hemeaki-admin-add-advertisers name="add-advertisers"></hemeaki-admin-add-advertisers>
-              <hemeaki-admin-add-categories name="add-categories"></hemeaki-admin-add-categories>
-              <hemeaki-admin-advertisers name="advertisers" advertisers="[[advertisers]]"></hemeaki-admin-advertisers>
+            <iron-pages attr-for-selected="name" selected="{{selectedTab}}" fallback-selection="contacts">
+              <hemeaki-admin-advertisers name="advertisers" advertisers="[[advertisers]]" categories="[[categories]]"></hemeaki-admin-advertisers>
               <hemeaki-admin-categories name="categories" categories="[[categories]]"></hemeaki-admin-categories>
               <hemeaki-admin-contacts name="contacts"></hemeaki-admin-contacts>
             </iron-pages>
@@ -85,6 +82,12 @@
 
           advertisers: Array
         };
+      }
+
+      logout() {
+        window.localStorage.removeItem('hemeakiLoggedinn');
+        window.location = '/#/inicio';
+        window.location.reload();
       }
     }
     window.customElements.define(HemeakiDashboard.is, HemeakiDashboard);

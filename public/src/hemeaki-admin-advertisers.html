@@ -1,16 +1,64 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="hemeaki-firebase-upload.html">
+<link rel="import" href="../bower_components/address-autocomplete/address-autocomplete.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-chip/paper-chip-input.html">
+<link rel="import" href="../bower_components/paper-chip/paper-chip.html">
+<link rel="import" href="../bower_components/web-animations-js/web-animations-next.min.html">
 
 <dom-module id="hemeaki-admin-advertisers">
   <template>
     <style include="shared-styles">
       :host {
         display: block;
+        --paper-input-container-color: black;
+        --paper-input-container-focus-color: #D13731;
       }
 
       hemeaki-advertiser-card {
         margin-bottom: 40px;
       }
+
+      .add-adveriser-card {
+        border-radius: 20px;
+        border: 1px black dashed;
+        padding: 20px;
+        margin-bottom: 40px;
+      }
+
+      .add-ad-icon {
+        width: 70px;
+        height: 70px;
+      }
+
+      .add-ad-button-container {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .add-ad-button {
+        background-color: black;
+        color: white;
+        border-radius: 30px;
+        margin-top: 20px;
+      }
     </style>
+
+    <iron-ajax
+      id="advertiserAjax"
+      url="https://hemeaki-api.herokuapp.com/api/advertiser"
+      method="POST"
+      content-type="application/json" 
+      on-response="refresh"
+      on-error="notPublished"></iron-ajax>
+
+    <iron-ajax
+      id="deleteAdvertiserAjax"
+      method="DELETE"
+      on-response="refresh"
+      on-error="notDeleted"></iron-ajax>
 
     <div class="contacts-container">
       <h2 class="admin-heading">Anunciantes</h2>
@@ -18,14 +66,78 @@
         <dom-repeat items="[[advertisers]]">
           <template>
             <div class$="[[_computeMargin(index)]]">
-              <a href="/#/perfil/[[item.name]]">
-                <hemeaki-advertiser-card advertiser-data="[[item]]"></hemeaki-advertiser-card>
-              </a>
+              <hemeaki-advertiser-card 
+                advertiser-data="[[item]]"
+                admin-mode
+                on-edit-btn-tapped="editTapped"
+                on-delete-btn-tapped="deleteTapped"></hemeaki-advertiser-card>
             </div>
           </template>
         </dom-repeat>
       </div>
+
+      <div class="add-advertiser">
+        <div class="add-adveriser-card">
+          <dom-if if="[[!addAdvertiserNow]]">
+            <template>
+              <div class="center">
+                <paper-icon-button icon="add" class="add-ad-icon" on-tap="enableAddAdvertiser"></paper-icon-button>
+              </div>
+              <h3 class="center">Añadir anunciante</h3>
+            </template>
+          </dom-if>
+          <dom-if if="[[addAdvertiserNow]]">
+            <template>
+              <div>
+                <h3>[[editPanelHeader]]</h3>
+                <hemeaki-firebase-upload folder-name="avatars" on-image-url-settled="setAvatarUrl"></hemeaki-firebase-upload>
+                <paper-input label="Nombre" value="{{formData.name}}"></paper-input>
+                <paper-input label="Descripción" value="{{formData.description}}"></paper-input>
+                <paper-input label="Email" value="{{formData.email}}"></paper-input>
+                <paper-input label ="Teléfono" allowed-pattern="[0-9- ]" value="{{formData.tel}}"></paper-input>
+                <address-autocomplete id="address" api-key="AIzaSyBo5GkfGaDY3Vfhz-nMwf4oWemPj6uUdUQ"></address-autocomplete>
+                <paper-input label="Fecebook" value="{{formData.facebookName}}"></paper-input>
+                <paper-input label="Facebook ID" value="{{formData.facebookId}}"></paper-input>
+
+                <paper-dropdown-menu label="Categoría" value="{{formData.slugCategory}}">
+                  <paper-listbox slot="dropdown-content" selected="0">
+                    <dom-repeat items="[[categories]]">
+                      <template>
+                        <paper-item>[[item.name]]</paper-item>
+                      </template>
+                    </dom-repeat>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+
+                <paper-chip-input enter-keys='["enter"]' id="tags"></paper-chip-input>
+
+                <hemeaki-firebase-upload folder-name="banners" on-image-url-settled="setBannerUrl"></hemeaki-firebase-upload>
+                <hemeaki-firebase-upload folder-name="promos" on-image-url-settled="setPromoUrl"></hemeaki-firebase-upload>
+                
+                <div class="add-ad-button-container">
+                  <dom-if if="[[!editedEnabled]]">
+                    <template>
+                      <paper-icon-button icon="add" class="add-ad-button" on-tap="addAdvertiser"></paper-icon-button>
+                    </template>
+                  </dom-if>
+                  <dom-if if="[[editedEnabled]]">
+                    <template>
+                      <paper-icon-button icon="save" class="add-ad-button delete-btn" on-tap="editAdvertiser"></paper-icon-button>
+                    </template>
+                  </dom-if>
+                </div>
+              </div>
+            </template>
+          </dom-if>
+          <div id="inputcategory"></div>
+        </div>
+      </div>
     </div>
+
+    <paper-toast id="advertisertoast" duration="0" text="¿Eliminar anunciante?" class="fit-bottom">
+      <paper-button class="red-text" on-tap="deleteAdvertiser">Eliminar</paper-button>
+      <paper-button on-tap="closeToast">Cancelar</paper-button>
+    </paper-toast>
 
   </template>
 
@@ -38,7 +150,33 @@
 
       static get properties() {
         return {
-          advertisers: Array
+          formData: {
+            type: Object,
+            value: {}
+          },
+          categories: Array,
+          advertisers: Array,
+
+          editPanelHeader: {
+            type: String,
+            value: 'Añadir anunciante'
+          },
+
+          addAdvertiserNow: {
+            type: Boolean,
+            value: false
+          },
+
+          editedEnabled: {
+            type: Boolean,
+            value: false
+          },
+
+          selectedItemSlug: String,
+
+          avatarUrl: String,
+          bannerUrl: String,
+          promoUrl: String
         };
       }
 
@@ -48,6 +186,98 @@
 
       _computeMargin(index) {
         return index % 2 === 0 ? 'even-margin' : 'odd-margin';
+      }
+
+      closeToast() {
+        this.$.advertisertoast.close();
+      }
+
+      deleteTapped(e) {
+        this.set('selectedItemSlug', e.detail.slug);
+        this.$.advertisertoast.open();
+      }
+
+      deleteAdvertiser() {
+        let token = window.localStorage.getItem('hemeakiUserToken');
+        this.$.deleteAdvertiserAjax.headers = { Authorization: token };
+        this.$.deleteAdvertiserAjax.url = `https://hemeaki-api.herokuapp.com/api/advertiser/${this.selectedItemSlug}`;
+        this.$.deleteAdvertiserAjax.generateRequest();
+      }
+
+      refresh() {
+        window.location.reload();
+      }
+
+      enableAddAdvertiser() {
+        this.set('addAdvertiserNow', true);
+      }
+
+      setAvatarUrl(event) {
+        this.set('avatarUrl', event.detail.url);
+      }
+
+      setBannerUrl(event) {
+        this.set('bannerUrl', event.detail.url);
+      }
+
+      setPromoUrl(event) {
+        this.set('promoUrl', event.detail.url);
+      }
+
+      quitAccents(s) {
+        var r = s.toLowerCase();
+        r = r.replace(new RegExp(/\s/g), "-");
+        r = r.replace(new RegExp(/[àáâãäå]/g), "a");
+        r = r.replace(new RegExp(/[èéêë]/g), "e");
+        r = r.replace(new RegExp(/[ìíîï]/g), "i");
+        r = r.replace(new RegExp(/ñ/g), "n");
+        r = r.replace(new RegExp(/[òóôõö]/g), "o");
+        r = r.replace(new RegExp(/[ùúûü]/g), "u");
+        return r;
+      }
+
+      validate(value, re) {
+        if (re === undefined) {
+          return value !== undefined && value !== '';
+        }
+        return re.test(value);
+      }
+
+      _setReqBody() {
+        var form = this.formData;
+        this.set('formData.slug', this.quitAccents(form.name));
+        this.set('formData.parsedAddress', this.shadowRoot.querySelector('#address').direccion.replace(new RegExp(/\s/g), "+"));
+        this.set('formData.address', this.shadowRoot.querySelector('#address').direccion);
+        this.set('formData.background', `${this.bannerUrl}, ${this.promoUrl}`);
+        this.set('formData.slugCategory', this.quitAccents(form.slugCategory));
+        this.set('formData.tags', this.shadowRoot.querySelector('#tags').values.toString());
+        this.set('formData.avatar', this.avatarUrl);
+        this.set('formData.ranking', 0);
+        this.set('formData.qualifiers', 0);
+        if (!this.validate(this.formData.avatar) || !this.validate(this.formData.name) ||
+          !this.validate(this.formData.tel) || !this.validate(this.formData.email) ||
+          !this.validate(this.formData.address) || !this.validate(this.formData.facebookName) ||
+          !this.validate(this.formData.facebookId) || !this.validate(this.formData.slugCategory) ||
+          !this.validate(this.formData.tags) || !this.validate(this.formData.facebookName)) {
+          return;
+        }
+        this.$.advertiserAjax.body = this.formData;
+      }
+
+      addAdvertiser() {
+        let token = window.localStorage.getItem('hemeakiUserToken');
+        this.$.advertiserAjax.headers = { Authorization: token };
+        this._setReqBody();
+        this.$.advertiserAjax.generateRequest();
+      }
+
+      notPublished() {
+        console.error('Error to post');
+      }
+
+      refresh() {
+        console.log('Its posted');
+        window.location.reload();
       }
     }
     window.customElements.define(HemeakiAdminAdvertisers.is, HemeakiAdminAdvertisers);

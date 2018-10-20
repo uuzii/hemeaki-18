@@ -26,12 +26,27 @@
         box-sizing: border-box;
         text-align: center;
       }
+
+      .btn-info {
+        display: none;
+      }
+
+      @media screen and (max-width: 600px) {
+        .btn-info {
+          display: block;
+          margin-top: 20px;
+        }
+      }
     </style>
 
     <div class="home-background-image">
       <div  class="home-logo-container">
         <img class="full-image center" src="../assets/recuadro.png" alt="Hemeaki logo">
         <img class="full-image center" src="../assets/todo.png" alt="Todo de todo">
+      </div>
+      <div class="center btn-info">
+        <a href="/#/nosotros">
+          <paper-button class="gray-btn">¿Quiénes somos?</paper-button></a>
       </div>
     </div>
   </template>

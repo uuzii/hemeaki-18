@@ -17,6 +17,8 @@
 <link rel="import" href="../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/paper-progress/paper-progress.html">
 
 <link rel="import" href="hemeaki-moment-import.html">
 <link rel="import" href="hemeaki-about.html">
@@ -181,9 +183,21 @@
           </div>
 
           <div class="navbar-linksbox-mobile">
-            <a href="/#/contacto">
-              <paper-icon-button icon="hemeaki-icons:mail"></paper-icon-button>
-            </a>
+            <dom-if if="[[!_validateLoggedIn()]]">
+              <template>
+                <a href="/#/contacto">
+                  <paper-icon-button icon="hemeaki-icons:mail"></paper-icon-button>
+                </a>
+              </template>
+            </dom-if>
+
+            <dom-if if="[[_validateLoggedIn()]]">
+              <template>
+                <a href="/#/panel">
+                  <paper-icon-button icon="dashboard"></paper-icon-button>
+                </a>
+              </template>
+            </dom-if>
           </div>
         </div>
       </div>
@@ -239,6 +253,16 @@
             value: []
           }
         };
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this.dispatchEvent(new CustomEvent('app-ready', {
+          detail: {
+            kicked: true,
+            bubbles: true
+          }
+        }));
       }
 
       _validateLoggedIn() {

@@ -46,7 +46,7 @@
 
     <div class="login-container">
       <div class="container">
-        <dom-if if="[[_validateLoggedIn()]]">
+        <dom-if if="[[!_validateLoggedIn()]]">
           <template>
             <div class="form-box">
               <h2 class="center">Inicia sesión</h2>
@@ -67,7 +67,7 @@
           </template>
         </dom-if>
 
-        <dom-if if="[[!_validateLoggedIn()]]">
+        <dom-if if="[[_validateLoggedIn()]]">
           <template>
             <p class="center loggued-in-msg">Ya has iniciado sesión, ve al <a href="/#/panel" class="red-text">panel de administrador</a> para adminsitrar los recursos del sitio</p>
           </template>

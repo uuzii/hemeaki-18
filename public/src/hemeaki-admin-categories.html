@@ -29,12 +29,6 @@
         justify-content: space-between;
       }
 
-      .delete-btn {
-        background-color: var(--hemeaki-red-color);
-        border-radius: 30px;
-        color: white;
-      }
-
       .add-cat-icon {
         width: 70px;
         height: 70px;
@@ -106,7 +100,7 @@
             <template>
               <div>
                 <h3>[[editPanelHeader]]</h3>
-                <paper-input id="categoryinputelement" label="Nombre" value="{{categoryForm.name}}"></paper-input>
+                <paper-input label="Nombre" value="{{categoryForm.name}}"></paper-input>
                 <paper-input label="Descripción" value="{{categoryForm.description}}"></paper-input>
                 <div class="add-cat-button-container">
                   <dom-if if="[[!editedEnabled]]">
@@ -129,7 +123,7 @@
       </div>
     </div>
 
-    <paper-toast id="categorytoast" duration="0" text="¿Eliminr categoría?" class="fit-bottom">
+    <paper-toast id="categorytoast" duration="0" text="¿Eliminar categoría?" class="fit-bottom">
       <paper-button class="red-text" on-tap="deleteCategory">Eliminar</paper-button>
       <paper-button on-tap="closeToast">Cancelar</paper-button>
     </paper-toast>

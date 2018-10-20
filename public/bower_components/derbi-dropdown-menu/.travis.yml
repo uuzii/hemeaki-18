@@ -1,0 +1,25 @@
+language: node_js
+sudo: required
+before_script:
+- npm install -g polymer-cli
+- polymer install --variants
+- npm run update-types && git diff --exit-code || (echo -e '\n\033[31mERROR:\033[0m
+  Typings are stale. Please run "npm run update-types".' && false)
+- npm run format && git diff --exit-code || (echo -e '\n\033[31mERROR:\033[0m Project
+  is not formatted. Please run "npm run format".' && false)
+node_js: stable
+addons:
+  firefox: latest
+  apt:
+    sources:
+    - google-chrome
+    packages:
+    - google-chrome-stable
+env:
+  global:
+  - secure: WZRSyljVXjeu/Wr4TZbrFP8Yj18MUQsma511ysx6G9Ia3FJg3srtZ/TPTqEUxIdqpEAAuPhxJuCJOFL5fFhZHpL+TLeyWJYPE3FpcDMp/BFM8rSDM0TKBbOTTKwZoZYML7ue0UjsxKf2o25voNigx7257d28gcv9zhiWsXEyPrkeLPbx3o/DS7cG9F0nhRT5JNiviaNZrguKcCSpRm6Nli+MOy/ZUSX/LFx7OYm/lSbV/5n4nKPdJ0YRFaUBrTr1KoInDTNEUA3IEp4DtDuhRDjRFZa82ZBKDFeuXg1GbCFk/+xWNnzYCnQCfY0cF05rHStsGzAKpWYI0f631n0GbjnDvMU33e6tzNZjaeAVevJADQVkTqkeCaJhOlt7rxX1mrrBm/zi9RROoJ1/Uo1Oclehcn4aPqb84raS3XtpOkV2MiRc5Ofm2y8ADP578O9J+yTtiDrlVxoTqwL9rGVzaLgr0Is9y8f6FgS2xjSv2E1uDtO0fARsO3ZrPametRI2sfI8dybknJvPWiF5FF2p5iyDb8FYBEUCimoE6OZRMSEVFtq/WkAzev2jbHiyVOaRMrXGkIZjuIirmOnzVUJKNILYmKm9BM8ncutOukPIKcv/dhFShlci5ZTsYEPgF++VS7d7GmES1tqMvutKVDlXC3sxAOh0prekXj5AIUCFMSM=
+  - secure: SNc/HPpacNLjjh7XR11hYRdcsmMRa9N3QaL54Y2MRfMs8BfxOiS5hw7j3qgNDIX4A0dgutnEBTXuR9P/kTGImRXr6PVH32bZUtCobJyqr4+/Os3WBuaBRNV+YGhVVbyLhTo0+zqpMvM+xTmEBuOqphzp3r0pSZNtvBvw3uKQaDCS1QSrSlAvdtsTSAsJEK8K46j7gPL6vco6F4wtapNXNfTKXpxRmRl52IH5Ef31qlU2eFUE+/eN/h7qsU7NzzXGE51INPjoMxfOoxyokO0uQP7hchB6+rkXw64g+92DddUWG/jKhsGDz5gZlcpg0JjEANCx3wbE9SXLax9//oyH1CKyTwKqHuVTj3KjTxzG1XZkrb8e7ZoMWGREHKM7Mz9YMgaVbrzH5S10dBIzfNVUq2N6FP/+dUPlWang5os209XKqJ9Jt7a+RvlZ+uEAWoMYntUtAwtvQi6DXNKO1kVmPQrza2XVIvt4M9B456+sifCLyvzKnD0ybAal6K30h1nfzLRL6vpy9wKo3yOX5CtDHTlpZN3MBTkh0LfR6Q4j/hbfvN4yyF/0cywkLvnsx0DyVCyzvAkCLRtPxiw4tZpJiuyk1MkXh9MO68dTwEOO3e/xIgem9mxPG+eDmxieIZktZ0mxQqcQwBBwFg4W4nOrz2Sqbk/8PI1nl9pFFU2Da4o=
+script:
+- xvfb-run polymer test
+- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then polymer test -s 'default'; fi
+dist: trusty
