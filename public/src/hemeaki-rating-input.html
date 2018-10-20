@@ -1,0 +1,119 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-star-rating/iron-star-rating.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+
+<dom-module id="hemeaki-rating-input">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      iron-star-rating {
+        --star-rating-size: 40px;
+      }
+
+      h1 {
+        margin: 0;
+        padding-right: 10px;
+      }
+
+      .rate-box {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+      }
+
+      paper-dialog {
+        text-align: center;
+        border-radius: 20px;
+      }
+
+      .rated-icon {
+        width: 60px;
+        height: 60px;
+        color: #fdd835;
+      }
+
+      paper-button {
+        color: dodgerblue;
+        font-size: 18px;
+      }
+    </style>
+
+    <iron-ajax
+      id="ratingAjax"
+      method="PUT"
+      content-type="application/json"
+      on-response="rateSent"></iron-ajax>
+
+    <div class="rate-box">
+      <div class="rate-text">
+        <h1>[[initialRating]]</h1>
+      </div>
+      <div>
+        <iron-star-rating on-rating-selected="sendRate"></iron-star-rating>
+      </div>
+    </div>
+
+    <paper-dialog modal id="modal">
+      <iron-icon icon="star" class="rated-icon"></iron-icon>
+      <h2>[[currentRate]]</h2>
+      <p>Calificación enviada</p>
+      <paper-button dialog-confirm>Ok</paper-button>
+    </paper-dialog>
+
+
+  </template>
+
+  <script>
+    class HemeakiRatingInput extends Polymer.Element {
+      static get is() {
+        return 'hemeaki-rating-input';
+      }
+
+      static get properties() {
+        return {
+          initialRating: {
+            type: Number,
+            value: 4.8
+          },
+
+          currentRate: Number,
+          initialQualifiers: Number,
+          userSlug: String,
+          modifiedRate: {
+            type: Object,
+            value: {}
+          }
+        };
+      }
+
+      sendRate(event) {
+        this.set('currentRate', event.detail.rating);
+        let pastQuelifiers = this.initialQualifiers;
+        let newQualifiers = this.initialQualifiers + 1;
+        let pastRanking = this.initialRating;
+        let pastSum = pastQuelifiers * pastRanking;
+        var newSum = pastSum + this.currentRate;
+        var newProm = newSum / newQualifiers;
+        newProm = Math.round(newProm * 100) / 100;
+        this.set('modifiedRate.ranking', newProm);
+        this.set('modifiedRate.qualifiers', newQualifiers);
+        this.forGenRequest();
+      }
+
+      forGenRequest() {
+        this.$.ratingAjax.url = `https://hemeaki-api.herokuapp.com/api/advertiser/${this.userSlug}`;
+        this.$.ratingAjax.body = this.modifiedRate;
+        this.$.ratingAjax.generateRequest();
+      }
+
+      rateSent() {
+        this.$.modal.open();
+      }
+    }
+
+    window.customElements.define(HemeakiRatingInput.is, HemeakiRatingInput);
+  </script>
+</dom-module>

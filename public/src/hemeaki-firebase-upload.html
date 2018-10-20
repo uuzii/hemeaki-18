@@ -10,7 +10,7 @@
     </style>
 
     <div>
-      <p class="paragraphs">Logo</p>
+      <p class="paragraphs">[[imageName]]</p>
       <iron-image
         id="image"
         width="[[imageWidth]]"
@@ -47,6 +47,7 @@
 
       static get properties() {
         return {
+          imageName: String,
           imageWidth: {
             type: String,
             value: '200'

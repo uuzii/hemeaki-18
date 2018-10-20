@@ -90,7 +90,10 @@
             <template>
               <div>
                 <h3>[[editPanelHeader]]</h3>
-                <hemeaki-firebase-upload folder-name="avatars" on-image-url-settled="setAvatarUrl"></hemeaki-firebase-upload>
+                <hemeaki-firebase-upload
+                  folder-name="avatars"
+                  on-image-url-settled="setAvatarUrl"
+                  image-name="Logo"></hemeaki-firebase-upload>
                 <paper-input label="Nombre" value="{{formData.name}}"></paper-input>
                 <paper-input label="Descripción" value="{{formData.description}}"></paper-input>
                 <paper-input label="Email" value="{{formData.email}}"></paper-input>
@@ -111,8 +114,15 @@
 
                 <paper-chip-input enter-keys='["enter"]' id="tags"></paper-chip-input>
 
-                <hemeaki-firebase-upload folder-name="banners" on-image-url-settled="setBannerUrl"></hemeaki-firebase-upload>
-                <hemeaki-firebase-upload folder-name="promos" on-image-url-settled="setPromoUrl"></hemeaki-firebase-upload>
+                <hemeaki-firebase-upload
+                  folder-name="banners"
+                  on-image-url-settled="setBannerUrl"
+                  image-name="Banner"></hemeaki-firebase-upload>
+                  
+                <hemeaki-firebase-upload
+                  folder-name="promos"
+                  on-image-url-settled="setPromoUrl"
+                  image-name="Promo"></hemeaki-firebase-upload>
                 
                 <div class="add-ad-button-container">
                   <dom-if if="[[!editedEnabled]]">

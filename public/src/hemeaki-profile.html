@@ -1,4 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="hemeaki-rating-input.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 
 <dom-module id="hemeaki-profile">
   <template>
@@ -88,6 +90,18 @@
         grid-template-columns: 1fr 1fr 1fr;
       }
 
+      .desktop-rating {
+        display: block;
+        padding-top: 10px;
+      }
+
+      paper-fab {
+        position: fixed;
+        bottom: 1em;
+        right: 1em;
+        background-color: #0084FF;
+      }
+
       @media screen and (max-width: 600px) {
         .info-section {
           display: grid;
@@ -133,6 +147,11 @@
         .services-title {
           display: block;
         }
+
+        .desktop-rating {
+          display: none;
+          padding-top: 0;
+        }
       }
     </style>
 
@@ -146,7 +165,13 @@
     <div class="profile-container">
       <div class="info-section container">
         <div class="avatar-box">
-          <img class="avatar" src="{{advertiser.avatar}}" alt="[[advertiser.name]] logo">
+          <iron-image
+            fade
+            width="200" height="200"
+            placeholder="../assets/avatar-placeholder.png"
+            position="left"
+            preload sizing="contain"
+            src="[[advertiser.avatar]]"></iron-image>
         </div>
 
         <div class="info-box">
@@ -219,7 +244,13 @@
                 </a>
               </div>
             </div>
-            <hr>            
+            <hr>
+            <div>
+              <hemeaki-rating-input
+                initial-rating="[[advertiser.ranking]]"
+                initial-qualifiers="[[advertiser.qualifiers]]"
+                user-slug="[[advertiser.slug]]"></hemeaki-rating-input>
+            </div> 
           </div>
 
           <div class="tags-space">
@@ -234,13 +265,20 @@
               </dom-repeat>
             </div>
           </div>
+
+          <div class="desktop-rating">
+            <hemeaki-rating-input
+              initial-rating="[[advertiser.ranking]]"
+              initial-qualifiers="[[advertiser.qualifiers]]"
+              user-slug="[[advertiser.slug]]"></hemeaki-rating-input>
+          </div>
         </div>
       </div>
 
       <div class="banner-section container">
         <h3>Publicidad</h3>
-        <img class="banners" src="[[banner]]" alt="">
-        <img class="banners" src="[[promo]]" alt="">
+        <img class="banners" src="[[banner]]" alt="[[advertiser.name]] banner">
+        <img class="banners" src="[[promo]]" alt="[[advertiser.name]] promo">
       </div>
     </div>
 
@@ -265,6 +303,10 @@
     </paper-toast>
 
     <paper-toast id="numbertoast" text="Número copiado"></paper-toast>
+
+    <a href="https://www.fb.com/msg/[[advertiser.facebookId]]">
+      <paper-fab icon="hemeaki-icons:messenger"></paper-fab>
+    </a>
   </template>
 
   <script>
