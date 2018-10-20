@@ -1,0 +1,47 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="hemeaki-home">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .home-background-image {
+        height: calc(100vh - 103px);
+        background-position: center;
+        background-size: cover;
+        background-image: url("../assets/fondo.jpg");
+        padding-top: 10vh;
+        box-sizing: border-box;
+      }
+
+      .home-logo-container {
+        width: 80%;
+        max-width: 360px;
+        margin: 0 auto;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 5px;
+        padding: 20px;
+        box-sizing: border-box;
+        text-align: center;
+      }
+    </style>
+
+    <div class="home-background-image">
+      <div  class="home-logo-container">
+        <img class="full-image center" src="../assets/recuadro.png" alt="Hemeaki logo">
+        <img class="full-image center" src="../assets/todo.png" alt="Todo de todo">
+      </div>
+    </div>
+  </template>
+
+  <script>
+    class HemeakiHome extends Polymer.Element {
+      static get is() {
+        return 'hemeaki-home';
+      }
+    }
+    window.customElements.define(HemeakiHome.is, HemeakiHome);
+  </script>
+</dom-module>

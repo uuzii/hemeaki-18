@@ -1,0 +1,130 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="hemeaki-mixin.html">
+
+<dom-module id="hemeaki-login">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        --paper-input-container-color: black;
+        --paper-input-container-focus-color: #D13731;
+      }
+
+      .login-container {
+        height: calc(100vh - 103px);
+        background-image: url('../assets/conect.png');
+        background-position: center;
+        background-size: cover;
+      }
+
+      .form-box {
+        padding-top: 32px;
+        width: 100%;
+        max-width: 360px;
+        margin: 0 auto;
+      }
+
+      paper-button {
+        width: 100%;
+        margin: 0;
+        margin-top: 20px;
+      }
+
+      .loggued-in-msg {
+        margin-top: 32px;
+      }
+    </style>
+
+    <iron-ajax 
+      id="loginAjax" 
+      url="https://hemeaki-api.herokuapp.com/api/signin" 
+      method="post" 
+      content-type="application/json" 
+      handle-as="json" 
+      on-response="handleUserResponse" 
+      on-error="handleUserError"></iron-ajax>
+
+    <div class="login-container">
+      <div class="container">
+        <dom-if if="[[_validateLoggedIn()]]">
+          <template>
+            <div class="form-box">
+              <h2 class="center">Inicia sesión</h2>
+              <dom-if if="[[!errorFlag]]">
+                <template>
+                  <p class="center">Para acceder a las funciones de adminsitrador</p>
+                </template>
+              </dom-if>
+              <dom-if if="[[errorFlag]]">
+                <template>
+                  <p class="red-text center">Hubo un error al iniciar sesión, inténtelo de nuevo</p>
+                </template>
+              </dom-if>
+              <paper-input label="Usuario" value="{{formData.user}}"></paper-input>
+              <paper-input label="Contraseña" value="{{formData.password}}" type="password"></paper-input>
+              <paper-button class="black-btn" on-tap="postLogin">Entrar</paper-button>
+            </div>
+          </template>
+        </dom-if>
+
+        <dom-if if="[[!_validateLoggedIn()]]">
+          <template>
+            <p class="center loggued-in-msg">Ya has iniciado sesión, ve al <a href="/#/panel" class="red-text">panel de administrador</a> para adminsitrar los recursos del sitio</p>
+          </template>
+        </dom-if>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    class HemeakiLogin extends Polymer.Element {
+      static get is() {
+        return 'hemeaki-login';
+      }
+
+      static get properties() {
+        return {
+          formData: {
+            type: Object,
+            value: {}
+          },
+          errorFlag: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+
+      postLogin() {
+        let ajax = this.$.loginAjax;
+        ajax.body = this.formData;
+        ajax.generateRequest();
+      }
+
+      handleUserResponse(payload) {
+        let response = payload.detail.response;
+        if (response.token) {
+          this.set('errorFlag', false);
+          window.localStorage.setItem('hemeakiUserName', this.formData.user);
+          window.localStorage.setItem('hemeakiUserToken', `Bearer ${response.token}`);
+          window.localStorage.setItem('hemeakiLoggedinn', true);
+          window.location = '/#/panel';
+          window.location.reload();
+        }
+        this.formData = {};
+      }
+
+      handleUserError(e) {
+        this.set('errorFlag', true);
+        this.formData = {};
+      }
+
+      _validateLoggedIn() {
+        let loggedin = window.localStorage.getItem('hemeakiLoggedinn');
+        return loggedin;
+      }
+    }
+    window.customElements.define(HemeakiLogin.is, HemeakiLogin);
+  </script>
+</dom-module>

@@ -1,0 +1,138 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-icons/communication-icons.html">
+
+<dom-module id="hemeaki-admin-contacts">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .items-box {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .delete-btn {
+        background-color: var(--hemeaki-red-color);
+        border-radius: 30px;
+        color: white;
+      }
+
+      .contact-card {
+        background-color: var(--google-grey-100);
+        border-radius: 20px;
+        @apply --shadow-elevation-3dp;
+        padding: 20px;
+        margin-bottom: 40px;
+      }
+
+      .contact-actions {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .toast-button {
+        text-transform: none;
+      }
+
+      @media screen and (max-width: 600px) {
+        .contact-card {
+          margin-bottom: 20px
+        }
+      }
+    </style>
+
+    <iron-ajax 
+      auto 
+      url="https://hemeaki-api.herokuapp.com/api/contacts"
+      handle-as="json"
+      last-response="{{contactsResponse}}"
+      on-error="handleContactsError"></iron-ajax>
+
+    <iron-ajax 
+      id="deletecontactAjax"
+      method="DELETE"
+      handle-as="json"
+      on-response="refresh"></iron-ajax>
+
+    
+    <div class="contacts-container">
+      <h2 class="admin-heading">Bandeja de contactos</h2>
+      <div class="items-list-grid">
+        <dom-repeat items="[[contactsResponse.contacts]]">
+          <template>
+            <div class$="[[_computeMargin(index)]]">
+              <div class="contact-card">
+                <h3>[[item.name]] [[item.lastName]]</h3>
+                <p class="paragraphs">[[item.message]]</p>
+                <p class="paragraphs gray-text small-text">[[_parseDate(item.date)]]</p>
+                <p class="paragraphs gray-text small-text">[[item.tel]]</p>
+                <div class="contact-actions">
+                  <div>
+                    <a href="mailto:[[item.email]]">
+                      <paper-icon-button icon="hemeaki-icons:mail"></paper-icon-button>
+                    </a>
+                    <a href="tel:[[item.tel]]">
+                      <paper-icon-button icon="communication:phone"></paper-icon-button>
+                    </a>
+                  </div>
+                  <paper-icon-button icon="delete" class="delete-btn" on-tap="trigToast"></paper-icon-button>
+                </div>
+              </div>
+            </div>
+          </template>
+        </dom-repeat>
+      </div>
+    </div>
+
+    <paper-toast id="deletetoast" class="fit-bottom" duration="0" text="¿Borrar contacto?">
+      <paper-button class="toast-button red-text" on-tap="deleteContact">Borrar</paper-button>
+      <paper-button on-tap="closeToast">Cancelar</paper-button>
+    </paper-toast>
+
+  </template>
+
+  <script>
+    class HemeakiAdminContacts extends Polymer.Element {
+      static get is() {
+        return 'hemeaki-admin-contacts';
+      }
+
+      static get properties() {
+        return {
+          selecdtedId: String
+        };
+      }
+
+      _parseDate(date) {
+        return moment(date).format('LLLL');
+      }
+
+      _computeMargin(index) {
+        return index % 2 === 0 ? 'even-margin' : 'odd-margin';
+      }
+
+      trigToast(event) {
+        this.set('selecdtedId', event.model.item._id);
+        this.$.deletetoast.open();
+      }
+
+      closeToast() {
+        this.$.deletetoast.close();
+      }
+
+      deleteContact() {
+        let token = window.localStorage.getItem('hemeakiUserToken');
+        this.$.deletecontactAjax.headers = { Authorization: token };
+        this.$.deletecontactAjax.url = `https://hemeaki-api.herokuapp.com/api/contact/${this.selecdtedId}`;
+        this.$.deletecontactAjax.generateRequest();
+      }
+
+      refresh() {
+        window.location.reload();
+      }
+    }
+    window.customElements.define(HemeakiAdminContacts.is, HemeakiAdminContacts);
+  </script>
+</dom-module>

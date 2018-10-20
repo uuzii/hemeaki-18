@@ -1,0 +1,156 @@
+<link rel="stylesheet" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="shared-styles">
+  <template>
+    <style>
+      .flex-centered {
+        display: flex;
+        align-items: center;
+      }
+
+      .side-padding {
+        padding: 0 20px;
+      }
+
+      .vertical-separator {
+        margin: 40px 0;
+      }
+
+      a {
+        color: initial;
+        text-decoration: none;
+      }
+
+      h1 {
+        font-size: 3em;
+      }
+
+      h2 {
+        font-size: 2em;
+        margin: 10px 0;
+        line-height: 1em;
+      }
+
+      h3 {
+        font-size: 1.5em;
+        margin: 20px 0 10px 0;
+      }
+
+      hr {
+        margin: 20px 0;
+        color: #666;
+        opacity: 0.3;
+      }
+
+      p {
+        font-size: 18px;
+      }
+
+      .center {
+        text-align: center;
+      }
+
+      paper-button {
+        text-transform: none;
+      }
+
+      .red-btn {
+        background-color: var(--hemeaki-red-color);
+        color: white;
+        font-size: 16px;
+        padding: 8.5px 20px;
+        border-radius: 50px;
+        margin: 0 8px 10px 0;
+      }
+
+      .gray-btn {
+        background-color: #f1f1f1;
+        font-size: 16px;
+        padding: 8.5px 20px;
+        border-radius: 50px;
+      }
+
+      .black-btn {
+        background-color: black;
+        color: white;
+        padding: 8.5px 20px;
+        border-radius: 50px;
+        font-weight: bold;
+      }
+
+      .full-btn {
+        margin: 20px 0 0 0;
+        width: 100%;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .gray-text {
+        color: #666;
+      }
+
+      .small-text {
+        font-size: 16px;
+      }
+      
+      .full-image {
+        width: 100%;
+      }      
+
+      .red-text {
+        color: var(--hemeaki-red-color);
+      }
+
+      .paragraphs {
+        margin: 10px 0;
+      }
+
+      .no-margin {
+        margin: 0;
+      }
+
+      .items-list-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .even-margin {
+        padding-right: 20px;
+      }
+
+      .odd-margin {
+        padding-left: 20px;
+      }
+
+      .admin-heading {
+        margin: 0;
+        padding-bottom: 20px;
+      }
+
+      @media screen and (max-width: 600px) {
+        .container {
+          max-width: initial;
+          margin: initial;
+          padding: 20px;
+        }
+      }
+
+      @media screen and (max-width: 600px) {
+        .items-list-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .even-margin {
+          padding-right: 0;
+        }
+
+        .odd-margin {
+          padding-left: 0;
+        }
+      }
+    </style>
+  </template>
+</dom-module>

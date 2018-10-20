@@ -1,0 +1,246 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="hemeaki-admin-categories">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        --paper-input-container-color: black;
+        --paper-input-container-focus-color: #D13731;
+      }
+
+      .category-card {
+        background-color: var(--google-grey-100);
+        border-radius: 20px;
+        @apply --shadow-elevation-3dp;
+        padding: 20px;
+        margin-bottom: 40px;
+      }
+
+      .add-category-card {
+        border-radius: 20px;
+        border: 1px black dashed;
+        padding: 20px;
+        margin-bottom: 40px;
+      }
+
+      .category-actions {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .delete-btn {
+        background-color: var(--hemeaki-red-color);
+        border-radius: 30px;
+        color: white;
+      }
+
+      .add-cat-icon {
+        width: 70px;
+        height: 70px;
+      }
+
+      .add-cat-button-container {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .add-cat-button {
+        background-color: black;
+        color: white;
+        border-radius: 30px;
+        margin-top: 20px;
+      }
+    </style>
+
+    <iron-ajax
+      id="categoryAjax"
+      url="https://hemeaki-api.herokuapp.com/api/category"
+      method="POST"
+      content-type="application/json"
+      on-response="refresh"></iron-ajax>
+
+    <iron-ajax
+      id="editCategoryAjax"
+      method="PUT"
+      content-type="application/json" 
+      on-response="refresh"></iron-ajax>
+
+    <iron-ajax
+      id="deleteCategoryAjax"
+      method="DELETE"
+      on-response="refresh"
+      on-error="notDeleted"></iron-ajax>
+
+    <div class="categories-container">
+      <h2 class="admin-heading">Categorías</h2>
+      <div class="items-list-grid">
+        <dom-repeat items="[[categories]]">
+          <template>
+            <div class$="[[_computeMargin(index)]]">
+              <div class="category-card">
+                <h3>[[item.name]]</h3>
+                <p class="paragraphs gray-text">[[item.description]]</p>
+                <div class="category-actions">
+                  <paper-icon-button icon="create" on-tap="trigEditCategory"></paper-icon-button>
+                  <paper-icon-button icon="delete" class="delete-btn" on-tap="trigToast"></paper-icon-button>
+                </div>
+              </div>
+            </div>
+          </template>
+        </dom-repeat>
+      </div>
+
+      <div class="add-category">
+        <div class="add-category-card">
+          <dom-if if="[[!addCategorNow]]">
+            <template>
+              <div class="center">
+                <paper-icon-button icon="add" class="add-cat-icon" on-tap="enableAddCategory"></paper-icon-button>
+              </div>
+              <h3 class="center">Añadir categoría</h3>
+            </template>
+          </dom-if>
+
+          <dom-if if="[[addCategorNow]]">
+            <template>
+              <div>
+                <h3>[[editPanelHeader]]</h3>
+                <paper-input id="categoryinputelement" label="Nombre" value="{{categoryForm.name}}"></paper-input>
+                <paper-input label="Descripción" value="{{categoryForm.description}}"></paper-input>
+                <div class="add-cat-button-container">
+                  <dom-if if="[[!editedEnabled]]">
+                    <template>
+                      <paper-icon-button icon="add" class="add-cat-button" on-tap="addCategory"></paper-icon-button>
+                    </template>
+                  </dom-if>
+                  <dom-if if="[[editedEnabled]]">
+                    <template>
+                      <paper-icon-button icon="save" class="add-cat-button" on-tap="editCategory"></paper-icon-button>
+                    </template>
+                  </dom-if>
+                </div>
+              </div>
+            </template>
+          </dom-if>
+
+          <div id="inputcategory"></div>
+        </div>
+      </div>
+    </div>
+
+    <paper-toast id="categorytoast" duration="0" text="¿Eliminr categoría?" class="fit-bottom">
+      <paper-button class="red-text" on-tap="deleteCategory">Eliminar</paper-button>
+      <paper-button on-tap="closeToast">Cancelar</paper-button>
+    </paper-toast>
+
+  </template>
+
+  <script>
+    class HemeakiAdminCategories extends Polymer.Element {
+      static get is() {
+        return 'hemeaki-admin-categories';
+      }
+
+      static get properties() {
+        return {
+          categories: Array,
+
+          selectedCategory: String,
+
+          addCategorNow: {
+            type: Boolean,
+            value: false
+          },
+
+          editPanelHeader: {
+            type: String,
+            value: 'Añadir categoría'
+          },
+
+          editedEnabled: {
+            type: Boolean,
+            value: false
+          },
+
+          categoryForm: {
+            type: Object,
+            value: {}
+          }
+        };
+      }
+
+      _computeMargin(index) {
+        return index % 2 === 0 ? 'even-margin' : 'odd-margin';
+      }
+
+      trigToast(event) {
+        this.set('selectedCategory', event.model.item.slug);
+        this.$.categorytoast.open();
+      }
+
+      closeToast() {
+        this.$.categorytoast.close();
+      }
+
+      deleteCategory() {
+        let token = window.localStorage.getItem('hemeakiUserToken');
+        this.$.deleteCategoryAjax.headers = { Authorization: token };
+        this.$.deleteCategoryAjax.url = `https://hemeaki-api.herokuapp.com/api/category/${this.selectedCategory}`;
+        this.$.deleteCategoryAjax.generateRequest();
+      }
+
+      refresh() {
+        window.location.reload();
+      }
+
+      enableAddCategory() {
+        this.set('addCategorNow', true);
+      }
+
+      toSlug(s) {
+        var r = s.toLowerCase();
+        r = r.replace(new RegExp(/\s/g), "-");
+        r = r.replace(new RegExp(/[àáâãäå]/g), "a");
+        r = r.replace(new RegExp(/[èéêë]/g), "e");
+        r = r.replace(new RegExp(/[ìíîï]/g), "i");
+        r = r.replace(new RegExp(/ñ/g), "n");
+        r = r.replace(new RegExp(/[òóôõö]/g), "o");
+        r = r.replace(new RegExp(/[ùúûü]/g), "u");
+        return r;
+      }
+
+      addCategory() {
+        let token = window.localStorage.getItem('hemeakiUserToken');
+        this.set('categoryForm.slug', this.toSlug(this.categoryForm.name));
+        this.$.categoryAjax.headers = { Authorization: token };
+        this.$.categoryAjax.body = this.categoryForm;
+        this.$.categoryAjax.generateRequest();
+      }
+
+      refresh() {
+        window.location.reload();
+      }
+
+      trigEditCategory(event) {
+        this.set('editPanelHeader', 'Editar categoría');
+        this.set('selectedCategory', event.model.item.slug);
+        this.set('addCategorNow', true);
+        this.set('editedEnabled', true);
+        this.set('categoryForm.name', event.model.item.name);
+        this.set('categoryForm.description', event.model.item.description);
+        this.$.inputcategory.scrollIntoView();
+      }
+
+      editCategory() {
+        let token = window.localStorage.getItem('hemeakiUserToken');
+        this.set('categoryForm.slug', this.toSlug(this.categoryForm.name));
+        this.$.editCategoryAjax.headers = { Authorization: token };
+        this.$.editCategoryAjax.url = `https://hemeaki-api.herokuapp.com/api/category/${this.selectedCategory}`;
+        this.$.editCategoryAjax.body = this.categoryForm;
+        this.$.editCategoryAjax.generateRequest();
+      }
+    }
+    window.customElements.define(HemeakiAdminCategories.is, HemeakiAdminCategories);
+  </script>
+</dom-module>

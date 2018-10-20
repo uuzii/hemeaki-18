@@ -1,0 +1,342 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="hemeaki-profile">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .profile-container {
+        margin-top: 32px;
+      }
+
+      .info-section {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+      }
+
+      .avatar {
+        width: 200px;
+        margin-bottom: 20px;
+      }
+
+      .name-space {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      h2 {
+        margin: 0;
+      }
+
+      h3 {
+        padding: 20px 0;
+        margin: 0;
+      }
+
+      iron-icon {
+        height: 20px;
+      }
+
+      .banners {
+        width: 100%;
+        margin: 10px 0 0 0;
+      }
+
+      .gray-btn {
+        margin-left: 20px;
+      }
+
+      .anchor-container {
+        margin: 10px 10px 10px 0;
+        display: inline-block;
+      }
+
+      .data-anchor {
+        font-size: 14px;
+      }
+
+      .data-anchor:hover {
+        color: #000;
+        transition: all 0.5s;
+      }
+
+      .service-box {
+        display: inline-block;
+        margin: 10px 10px 10px 0;
+        background-color: #f1f1f1;
+        color: #666;
+        border-radius: 50px;
+        font-size: 14px;
+        padding: 8px 20px;
+      }
+
+      .mobile-info {
+        display: none;
+      }
+
+      .services-title {
+        display: none;
+      }
+
+      .toast-container {
+        text-align: center;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      @media screen and (max-width: 600px) {
+        .info-section {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+
+        .avatar {
+          width: 200px;
+        }
+
+        .mobile-info {
+          display: block;
+        }
+
+        .info-space {
+          display: none;
+        }
+
+        .banners {
+          margin: 10px 0;
+        }
+
+        .mobile-info-item {
+          display: grid;
+          grid-template-columns: 1fr 50px;
+        }
+
+        .info-item-text {
+          display: flex;
+          align-items: center;
+        }
+
+        .info-item-icon {
+          display: flex;
+          align-items: flex-end;
+          justify-content: right;
+        }
+
+        .service-box {
+          margin: 10px 5px 0 0;
+        }
+
+        .services-title {
+          display: block;
+        }
+      }
+    </style>
+
+    <iron-ajax 
+      auto 
+      url="[[computedUrl]]"
+      handle-as="json"
+      on-response="advertiserResponses"
+      on-error="handleContactsError"></iron-ajax>
+
+    <div class="profile-container">
+      <div class="info-section container">
+        <div class="avatar-box">
+          <img class="avatar" src="https://firebasestorage.googleapis.com/v0/b/hemeaki-mar.appspot.com/o/avatars%2FDYMAS%20LOGO.png?alt=media&token=e118b362-b3cd-4f1e-a78c-b757aa5f816a" alt="">
+        </div>
+
+        <div class="info-box">
+          <div class="name-space">
+            <h2>[[computedName]]</h2>
+            <paper-icon-button icon="social:share" on-tap="openShareToast"></paper-icon-button>
+          </div>
+
+          <div class="info-space">
+            <div>
+              <div class="anchor-container">
+                <a href="https://www.google.com.mx/maps/place/[[advertiser.parsedAddress]]" class="data-anchor gray-text"><iron-icon icon="hemeaki-icons:location"></iron-icon> [[advertiser.address]]</a>
+              </div>
+              <div class="anchor-container">
+                <a href="mailto:[[advertiser.email]]" class="data-anchor gray-text"><iron-icon icon="hemeaki-icons:mail"></iron-icon> [[advertiser.email]]</a>
+              </div>
+              <div class="anchor-container">
+                <a href="https://www.facebook.com/[[advertiser.facebookId]]" class="data-anchor gray-text"><iron-icon icon="hemeaki-icons:facebook"></iron-icon> [[advertiser.facebookName]]</a>
+              </div>
+              <div class="anchor-container">
+                <a class="data-anchor gray-text"><iron-icon icon="hemeaki-iconset:whatsapp"></iron-icon> [[advertiser.tel]]</a>      
+              </div>
+            </div>
+          </div>
+
+          <div class="description-space">
+            <p>[[advertiser.description]]</p>
+          </div>
+
+          <div class="mobile-info">
+            <h3>Contacto</h3>
+            <div class="mobile-info-item">
+              <div class="info-item-text">
+                <p class="no-margin">[[advertiser.tel]]</p>
+              </div>
+              <div class="info-item-icon">
+                <paper-icon-button icon="hemeaki-iconset:whatsapp" on-tap="copyPhoneNumber"></paper-icon-button>
+              </div>
+            </div>
+            <hr>
+            <div class="mobile-info-item">
+              <div class="info-item-text">
+                <p class="no-margin">[[advertiser.address]]</p>
+              </div>
+              <div class="info-item-icon">
+                <a href="https://www.google.com.mx/maps/place/[[advertiser.parsedAddress]]">
+                  <paper-icon-button icon="hemeaki-icons:location"></paper-icon-button>
+                </a>
+              </div>
+            </div>
+            <hr>
+            <div class="mobile-info-item">
+              <div class="info-item-text">
+                <p class="no-margin">[[advertiser.email]]</p>
+              </div>
+              <div class="info-item-icon">
+                <a href="mailto:[[advertiser.email]]">
+                  <paper-icon-button icon="hemeaki-icons:mail"></paper-icon-button>
+                </a>
+              </div>
+            </div>
+            <hr>
+            <div class="mobile-info-item">
+              <div class="info-item-text">
+                <p class="no-margin">[[advertiser.facebookName]]</p>
+              </div>
+              <div class="info-item-icon">
+                <a href="https://www.touch.facebook.com/[[advertiser.facebookId]]">
+                  <paper-icon-button icon="hemeaki-icons:facebook"></paper-icon-button>
+                </a>
+              </div>
+            </div>
+            <hr>            
+          </div>
+
+          <div class="tags-space">
+            <h3 class="services-title">Servicios</h3>
+            <div class="services-container">
+              <dom-repeat items="[[_computeTags(advertiser.tags)]]">
+                <template>
+                  <div class="service-box">
+                    <span>[[item]]</span>
+                  </div>
+                </template>
+              </dom-repeat>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="banner-section container">
+        <h3>Publicidad</h3>
+        <img class="banners" src="https://firebasestorage.googleapis.com/v0/b/hemeaki-mar.appspot.com/o/backgrounds%2FIMAGEN%20TIZA%201.jpg?alt=media&token=b113e0f7-4758-42b4-b5e1-ceb385d0d2f5" alt="">
+        <img class="banners" src="https://firebasestorage.googleapis.com/v0/b/hemeaki-mar.appspot.com/o/promos%2FIMAGEN%20TIZA%202.jpg?alt=media&token=d87c96b0-6c41-46a1-878d-365579aecd29" alt="">
+      </div>
+    </div>
+
+    <paper-toast id="sharetoast" duration="0" class="fit-bottom">
+      <p class="paragraphs center">Compartir</p>
+      <div class="toast-container">
+        <div class="toast-item">
+          <div><paper-icon-button class="toast-buttons" icon="hemeaki-icons:facebook"></paper-icon-button></div>
+          <div>Facebook</div>
+        </div>
+
+        <div class="toast-item">
+          <div><paper-icon-button class="toast-buttons" icon="hemeaki-iconset:whatsapp"></paper-icon-button></div>
+          <div>WhatsApp</div>
+        </div>
+
+        <div class="toast-item">
+          <div><paper-icon-button class="toast-buttons" icon="content-copy"></paper-icon-button></div>
+          <div>Copiar Link</div>
+        </div>
+      </div>
+    </paper-toast>
+
+    <paper-toast id="numbertoast" text="Número copiado"></paper-toast>
+  </template>
+
+  <script>
+    class HemeakiProfile extends Polymer.Element {
+      static get is() {
+        return 'hemeaki-profile';
+      }
+
+      static get properties() {
+        return {
+          services: {
+            type: Array,
+            value: ['Hola', 'Mundo', 'Hello', 'World', 'Pruebas', 'Servicios']
+          },
+
+          computedUrl: {
+            type: String,
+            computed: '_computeUrl(route)'
+          },
+
+          computedName: {
+            type: String,
+            computed: '_computeAdName(route)'
+          },
+
+          advertiser: Object
+        };
+      }
+
+      advertiserResponses(e) {
+        this.set('advertiser', e.detail.response.advertiser[0]);
+      } 
+
+      _computeUrl(route) {
+        return `https://hemeaki-api.herokuapp.com/api/advertiser/${this.toSlug(route.path.slice(1))}`;
+      }
+
+      _computeAdName(route) {
+        return route.path.slice(1);
+      }
+
+      _computeTags(tags) {
+        return tags.split(',');
+      }
+
+      toSlug(s) {
+        var r = s.toLowerCase();
+        r = r.replace(new RegExp(/\s/g), "-");
+        r = r.replace(new RegExp(/[àáâãäå]/g), "a");
+        r = r.replace(new RegExp(/[èéêë]/g), "e");
+        r = r.replace(new RegExp(/[ìíîï]/g), "i");
+        r = r.replace(new RegExp(/ñ/g), "n");
+        r = r.replace(new RegExp(/[òóôõö]/g), "o");
+        r = r.replace(new RegExp(/[ùúûü]/g), "u");
+        return r;
+      }
+
+      _computeMargin(index) {
+        return index % 2 === 0 ? 'even-margin' : 'odd-margin';
+      }
+
+      openShareToast() {
+        this.$.sharetoast.toggle();
+      }
+
+      copyPhoneNumber() {
+        let text = this.advertiser.tel;
+        text.select();
+        document.execCommand("Copy");
+        this.$.numbertoast.open();
+      }
+    }
+    window.customElements.define(HemeakiProfile.is, HemeakiProfile);
+  </script>
+</dom-module>

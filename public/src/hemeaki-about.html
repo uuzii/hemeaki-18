@@ -1,0 +1,106 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="hemeaki-about">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .portrait-image {
+        height: 50vh;
+        background-image: url('../assets/about-one.jpeg');
+        background-position: center;
+        background-size: cover;
+      }
+
+      .new-ideas-st {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .new-ideas-nd {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .right-padding {
+        padding: 0 20px 0 0;
+      }
+
+      .left-padding {
+        padding: 0 0 0 20px;
+      }
+
+      @media screen and (max-width: 600px) {
+        .new-ideas-st {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+
+        .new-ideas-nd {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+
+        .right-padding {
+          padding: 0;
+        }
+
+        .left-padding {
+          padding: 0;
+        }
+      }
+    </style>
+
+    <div class="">
+      <div class="tell-to-world container center">
+        <h1 class="vertical-separator">¡Dile al mundo HemeAki!</h1>
+        <p>Heme Aki es una plataforma hecha para proyectar tu empresa o negocio en el mundo digital, su diseño y estructura facilita la búsqueda de productos y servicios, haciéndola así, muy eficaz</p>
+        <a href="/#/contacto">
+          <paper-button class="black-btn">Unirme</paper-button>
+        </a>
+      </div>
+
+      <div class="portrait-image vertical-separator"></div>
+
+      <div class="new-ideas container">
+        <p class="gray-text small-text center">Conócenos</p>
+        <h1 class="center">¿Para qué puedo usar HemeAki?</h1>
+
+        <div class="new-ideas-st vertical-separator">
+          <div class="right-padding">
+            <p class="gray-text small-text">Creemos en tus proyectos</p>
+            <h2>En Hemeaki creemos en los nuevos proyectos e ideas frescas</h2>
+            <p>Es por eso que nos dimos a la tarea de crear un canal de comunicación efectivo para difundirlas.</p>
+          </div>
+          <div class="left-padding">
+            <img class="full-image" src="https://images.unsplash.com/photo-1512135479691-71087f6c117b?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=41bb839cc02b31e58d2cfa9bccad95ac&auto=format&fit=crop&w=1053&q=80" alt="Negocio de pan">
+          </div>
+        </div>
+
+        <div class="new-ideas-nd vertical-separator">
+          <div class="right-padding">
+            <p class="gray-text small-text">Somos parte de una misma comunidad</p>
+            <h2>En HemeAki creemos en ti, porque juntamente contigo formamos parte de esta Nueva Era de Prosperidad y Crecimiento</h2>
+            <p>Compartimos los mismos valores; valores que nos ayudarán a cumplir nuestras metas sin perder nuestra identidad.</p>
+          </div>
+          <div class="left-padding">
+            <img class="full-image" src="https://images.unsplash.com/photo-1507090960745-b32f65d3113a?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=92a1714119e42bc9d947f75ec4733ed6&auto=format&fit=crop&w=1050&q=80" alt="Ciudad">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    class HemeakiAbout extends Polymer.Element {
+      static get is() {
+        return 'hemeaki-about';
+      }
+    }
+    window.customElements.define(HemeakiAbout.is, HemeakiAbout);
+  </script>
+</dom-module>

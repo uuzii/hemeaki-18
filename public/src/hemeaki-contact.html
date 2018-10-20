@@ -1,0 +1,145 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="hemeaki-contact">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        --paper-input-container-color: black;
+        --paper-input-container-focus-color: #D13731;
+      }
+
+      .contact-container {
+        display: grid;
+        grid-template-columns: 400px 1fr;
+      }
+
+      .contact-info-background {
+        background-image: url('https://images.unsplash.com/photo-1506545781647-b898b17fdbdc?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=219aae468620fc0a9241441a7fbcece6&auto=format&fit=crop&w=634&q=80');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: calc(100vh - 103px);
+        color: white;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .contact-logo {
+        width: 50px;
+      }
+
+      .contact-form {
+        padding: 20px;
+      }
+
+      .toast-button {
+        color: dodgerblue;
+        text-transform: none;
+      }
+
+      @media screen and (max-width: 600px) {
+        .contact-container {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+
+    <iron-ajax 
+      id="contactAjax" 
+      url="https://hemeaki-api.herokuapp.com/api/contact"
+      method="POST"
+      content-type="application/json"
+      on-response="trigToast"></iron-ajax>
+
+    <div class="contact-container">
+      <div class="contact-info-background">
+        <img class="contact-logo" src="../assets/heme.png" alt="Logo Hemeaki">
+        <h1>Únete a HemeAki</h1>
+        <p>Si estás interesado en unirte a Hemeaki, déjanos un mensaje contándonos qué haces y por qué te gustaría anunciarte con nosotros</p>
+      </div>
+      
+      <div class="contact-form">
+        <h1>Déjanos un mensaje...</h1>
+        <paper-input label="Nombre" allowed-pattern="[a-zA-Z ]" value="{{formContact.name}}"></paper-input>
+        <paper-input label="Apellido" allowed-pattern="[a-zA-Z ]" value="{{formContact.lastName}}"></paper-input>
+        <paper-input label="Teléfono" allowed-pattern="[0-9- ]" value="{{formContact.tel}}" type="number"></paper-input>
+        <paper-input label="Email" value="{{formContact.email}}"></paper-input>
+        <paper-input label="Mensaje" value="{{formContact.message}}"></paper-input>
+        <dom-if if="[[errorFlag]]">
+          <template>
+            <p class="red-text">Hubo un error, verifique que todos sus datos estén completos</p>
+          </template>
+        </dom-if>
+        <paper-button class="black-btn full-btn" on-tap="saveContact">Enviar</paper-button>
+      </div>
+    </div>
+
+    <paper-toast id="contactoast" text="Su mensaje se ha enviado" duration="0">
+      <paper-button class="toast-button" on-tap="changeRoute">Ir a inicio</paper-button>
+    </paper-toast>
+
+  </template>
+
+  <script>
+    class HemeakiContact extends Polymer.Element {
+
+      static get is() {
+        return 'hemeaki-contact';
+      }
+
+      static get properties() {
+        return {
+          formContact: {
+            type: Object,
+            value: {}
+          },
+
+          errorFlag: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+      
+      validate(value, re) {
+        if (re === undefined) {
+            return value !== undefined && value !== '';
+        }
+        return re.test(value);
+      }
+
+      _setReqBody() {
+        let form = this.formContact;
+        if (!this.validate(form.name) || !this.validate(form.lastName) ||
+          !this.validate(form.email) || !this.validate(form.tel) ||
+          !this.validate(form.message)) {
+            this.set('errorFlag', true);
+            return;
+        } else {
+          this.set('errorFlag', false);
+          this.$.contactAjax.body = this.formContact;
+        }
+      }
+
+      saveContact() {
+        this._setReqBody();
+        this.$.contactAjax.generateRequest();
+      }
+      
+      trigToast() {
+        this.set('errorFlag', false);
+        this.set('formContact', {});
+        this.$.contactoast.open();
+      }
+
+      changeRoute() {
+        this.$.contactoast.close();
+        window.location = '/#/inicio';
+      }
+    }
+
+    window.customElements.define(HemeakiContact.is, HemeakiContact);
+  </script>
+</dom-module>

@@ -1,0 +1,55 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="hemeaki-admin-advertisers">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      hemeaki-advertiser-card {
+        margin-bottom: 40px;
+      }
+    </style>
+
+    <div class="contacts-container">
+      <h2 class="admin-heading">Anunciantes</h2>
+      <div class="items-list-grid">
+        <dom-repeat items="[[advertisers]]">
+          <template>
+            <div class$="[[_computeMargin(index)]]">
+              <a href="/#/perfil/[[item.name]]">
+                <hemeaki-advertiser-card advertiser-data="[[item]]"></hemeaki-advertiser-card>
+              </a>
+            </div>
+          </template>
+        </dom-repeat>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    class HemeakiAdminAdvertisers extends Polymer.Element {
+
+      static get is() {
+        return 'hemeaki-admin-advertisers';
+      }
+
+      static get properties() {
+        return {
+          advertisers: Array
+        };
+      }
+
+      observeAdsGetted(nex) {
+        console.log(nex);
+      }
+
+      _computeMargin(index) {
+        return index % 2 === 0 ? 'even-margin' : 'odd-margin';
+      }
+    }
+    window.customElements.define(HemeakiAdminAdvertisers.is, HemeakiAdminAdvertisers);
+  </script>
+</dom-module>

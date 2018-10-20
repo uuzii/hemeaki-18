@@ -1,0 +1,272 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/utils/async.html">
+
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input-container.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-input/iron-input.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-styles/demo-pages.html">
+<link rel="import" href="../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+
+<link rel="import" href="hemeaki-moment-import.html">
+<link rel="import" href="hemeaki-about.html">
+<link rel="import" href="hemeaki-contact.html">
+<link rel="import" href="hemeaki-dashboard.html">
+<link rel="import" href="hemeaki-home.html">
+<link rel="import" href="hemeaki-list.html">
+<link rel="import" href="hemeaki-login.html">
+<link rel="import" href="hemeaki-profile.html">
+<link rel="import" href="hemeaki-search.html">
+<link rel="import" href="hemeaki-icons.html">
+<link rel="import" href="hemeaki-advertiser-card.html">
+
+<dom-module id="hemeaki-app">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        --paper-input-container-color: #f1f1f1;
+        --paper-input-container-focus-color: #f1f1f1;
+        --hemeaki-red-color: #E8172B;
+        --paper-toast-background-color: white;
+        --paper-toast-color: black;
+      }
+
+      .navbar-container-controls {
+        height: 62px;
+        display: grid;
+        grid-template-columns: 72px 600px 1fr;
+      }
+
+      .navbar-logo {
+        width: 32px;
+        height: 36.5px;
+      }
+
+      .navbar-input {
+        width: 100%;
+        height: 32px;
+        border-radius: 50px;
+      }
+
+      .paper-input-container {
+        padding-top: 6px;
+        padding-bottom: 4px;
+      }
+
+      .input-box {
+        border: 1px transparent solid;
+        padding: 0 10px;
+        box-sizing: border-box;
+        background-color: #f1f1f1;
+        border-radius: 50px;
+        width: 100%;
+      }
+
+      .input-box:hover {
+        border: 1px #d1d1d1 solid;
+      }
+
+      .input-element {
+        width: 100%;
+        outline: none;
+        border: 0px solid;
+        background-color: transparent;
+        -webkit-appearance: none;
+        font-family: 'Roboto', sans-serif;
+        font-size: 14px;
+      }
+
+      .navbar-linksbox-desktop {
+        display: block;
+      }
+
+      .navbar-linksbox-mobile {
+        display: none;
+      }
+
+      .navbar-container-categories {
+        padding: 0 20px;
+        overflow: auto;
+        white-space: nowrap;
+      }
+
+      .category-btn {
+        background-color: var(--hemeaki-red-color);
+        color: white;
+        font-size: 16px;
+        padding: 8.5px 20px;
+        border-radius: 50px;
+        margin: 0 8px 10px 0;
+      }
+
+      @media screen and (max-width: 600px) {
+        .navbar-container-controls {
+          grid-template-columns: 72px 1fr 72px;
+        }
+
+        .navbar-linksbox-desktop {
+          display: none;
+        }
+
+        .navbar-linksbox-mobile {
+          display: block;
+        }
+
+        .navbar-controls-linksbox {
+          justify-content: center;
+        }
+      }
+    </style>
+
+    <app-location route="{{route}}" use-hash-as-path></app-location>
+    <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
+
+    <firebase-app
+      auth-domain="hemeaki-18.firebaseapp.com"
+      database-url="https://hemeaki-18.firebaseio.com/"
+      api-key="AIzaSyBOwaBvD8zYrchrfoMlWXv3XtAGMBCuwy4"
+      storage-bucket="hemeaki-18.appspot.com"
+      messaging-sender-id="597282902454"></firebase-app>
+
+    <iron-ajax 
+      auto
+      url="https://hemeaki-api.herokuapp.com/api/categories"
+      handle-as="json"
+      last-response="{{categoriesResponse}}"
+      on-error="handleContactsError"></iron-ajax>
+
+    <div class="app-navbar-container">
+      <!-- Navbar div -->
+      <div class="navbar-container-controls">
+        <div class="navbar-controls-logobox flex-centered">
+          <a href="/#/inicio">
+            <img src="../assets/logo.png" class="navbar-logo side-padding" alt="logo hemeaki">
+          </a>
+        </div>
+
+        <div class="navbar-controls-searchbox flex-centered">
+          <div class="input-box">
+            <paper-input-container class="paper-input-container" no-label-float>
+              <label slot="label" style="color: #999; font-size: 13px">Buscar</label>
+              <iron-input slot="input">
+                <input class="input-element" on-input="inputChanged">
+              </iron-input>
+              <iron-icon id="searchicon" icon="search" slot="prefix" style="margin-right: 6px;"></iron-icon>
+            </paper-input-container>
+          </div>
+        </div>
+
+        <div class="navbar-controls-linksbox flex-centered">
+          <div class="navbar-linksbox-desktop">
+            <a class="side-padding" href="/#/inicio">Inicio</a>
+            <a class="side-padding" href="/#/nosotros">Nosotros</a>
+            <a class="side-padding" href="/#/contacto">Contacto</a>
+            <dom-if if="[[_validateLoggedIn()]]">
+              <template>
+                <a class="side-padding" href="/#/panel">Panel</a>
+                <a class="side-padding red-text" href="" on-click="logout">Cerrar sesión</a>
+              </template>
+            </dom-if>
+          </div>
+
+          <div class="navbar-linksbox-mobile">
+            <a href="/#/contacto">
+              <paper-icon-button icon="hemeaki-icons:mail"></paper-icon-button>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categories list div -->
+      <div class="navbar-container-categories">
+        <dom-repeat items="[[categoriesResponse.categories]]">
+          <template>
+            <a href="/#/categoria/[[item.name]]">
+              <paper-button class="red-btn">[[item.name]]</paper-button>
+            </a>
+          </template>
+        </dom-repeat>
+      </div>
+    </div>
+
+    <iron-pages role="main" selected="[[routeData.page]]" attr-for-selected="name" selected-attribute="visible"
+      fallback-selection="inicio">
+      <hemeaki-about name="nosotros"></hemeaki-about>
+      <hemeaki-contact name="contacto"></hemeaki-contact>
+      <hemeaki-dashboard name="panel" categories="[[categoriesResponse.categories]]" advertisers="[[advertisersData]]"></hemeaki-dashboard>
+      <hemeaki-home name="inicio"></hemeaki-home>
+      <hemeaki-list name="categoria" route="[[subroute]]"></hemeaki-list>
+      <hemeaki-login name="login"></hemeaki-login>
+      <hemeaki-profile name="perfil" route="[[subroute]]"></hemeaki-profile>
+      <hemeaki-search name="busqueda" query="[[searchQuery]]" on-advertisers-settled="setAdvertisersData"></hemeaki-search>
+    </iron-pages>
+
+  </template>
+
+  <script>
+    class HemeakiApp extends Polymer.Element {
+      static get is() {
+        return 'hemeaki-app';
+      }
+
+      static get properties() {
+        return {
+          page: {
+            type: String,
+            value: 'inicio'
+          },
+
+          searchQuery: String,
+
+          locationsForSearch: {
+            type: Array,
+            value: []
+          },
+
+          advertisersData: {
+            type: Array,
+            value: []
+          }
+        };
+      }
+
+      _validateLoggedIn() {
+        let loggedin = window.localStorage.getItem('hemeakiLoggedinn');
+        return loggedin;
+      }
+
+      inputChanged(event) {
+        if(event.path[0].value || event.path[0].value !== '') {
+          this.locationsForSearch.push(this.route.path);
+          window.location = '/#/busqueda';
+          this.set('searchQuery', event.path[0].value);
+        } else {
+          window.location = `/#${this.locationsForSearch[0]}`;
+          this.set('locationsForSearch', []);
+        }
+      }
+
+      logout() {
+        window.localStorage.removeItem('hemeakiLoggedinn');
+        window.location = '/#/inicio';
+        window.location.reload();
+      }
+
+      setAdvertisersData(event) {
+        this.set('advertisersData', event.detail.advertisers);
+      }
+    }
+    window.customElements.define(HemeakiApp.is, HemeakiApp);
+  </script>
+</dom-module>

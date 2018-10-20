@@ -1,0 +1,128 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="hemeaki-search">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .search-item {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+      }
+
+      .avatar {
+        width: 100%;
+      }
+
+      .title {
+        margin-top: 30px;
+        padding: 0 0 30px 0;
+      }
+
+      .name {
+        margin: 0;
+        padding: 0 0 10px 0;
+      }
+
+      .item-text {
+        padding-left: 20px;
+      }
+
+      @media screen and (max-width: 600px) {
+        .title {
+          margin: 0;
+          padding: 0 0 30px 0;
+        }
+
+        .search-item {
+          display: grid;
+          grid-template-columns: 100px 1fr;
+        }
+      }
+    </style>
+
+    <iron-ajax 
+      auto 
+      url="https://hemeaki-api.herokuapp.com/api/advertisers"
+      handle-as="json"
+      last-response="{{advertisersResponse}}"
+      on-response="trigAdvertisersGetted"
+      on-error="handleContactsError"></iron-ajax>
+
+    <div class="container">
+      <h3 class="title">Resultados para [[query]]</h3>
+      <dom-repeat items="[[advertisersResponse.advertisers]]" filter="[[searchQuery(query)]]">
+        <template>
+          <dom-if if="[[_validateHr(index)]]">
+            <template>
+              <hr>
+            </template>
+          </dom-if>
+          <div class="search-item">
+            <div class="item-box">
+              <img class="avatar" src="[[item.avatar]]" alt="">
+            </div>
+            <div class="item-text">
+              <h3 class="name">[[item.name]]</h3>
+              <dom-repeat items="[[_computeTags(item.tags)]]">
+                <template>
+                  <p class="no-margin gray-text">[[item]]</p>
+                </template>
+              </dom-repeat>
+            </div>
+          </div>
+        </template>
+      </dom-repeat>
+    </div>
+
+  </template>
+
+  <script>
+    class HemeakiSearch extends Polymer.Element {
+
+      static get is() {
+        return 'hemeaki-search';
+      }
+
+      static get properties() {
+        return {
+          name: {
+            type: String,
+            value: 'Hemekai'
+          },
+
+          query: String
+        };
+      }
+
+      _validateHr(index) {
+        return index !== 0;
+      }
+
+      _computeTags(tags) {
+        return tags.split(',');
+      }
+
+      searchQuery(val) {
+        return function(item) {
+          if(val === '') {
+            return true;
+          } else {
+            return item.name.toLowerCase().includes(val);
+          }
+        }
+      }
+      
+      trigAdvertisersGetted(event) {
+        this.dispatchEvent(new CustomEvent('advertisers-settled', {
+          detail: {
+            advertisers: event.detail.response.advertisers
+          }
+        }));
+      }
+    }
+    window.customElements.define(HemeakiSearch.is, HemeakiSearch);
+  </script>
+</dom-module>

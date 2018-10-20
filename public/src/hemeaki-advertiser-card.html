@@ -1,0 +1,70 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="hemeaki-advertiser-card">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .card-container {
+        background-color: var(--google-grey-100);
+        border-radius: 20px;
+        @apply --shadow-elevation-3dp;
+      }
+
+      .avatar-section {
+        padding: 20px;
+        background-image: url('../assets/connect.png');
+        background-position: center;
+        background-size: cover;
+        text-align: center;
+      }
+
+      .info-section {
+        background-color: white;
+        padding: 20px;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+      }
+
+      .avatar {
+        width: 60%;
+      }
+
+      .paragraph-lil-margin {
+        margin: 0 0 10px 0;
+      }
+    </style>
+
+    <div class="card-container">
+      <div class="avatar-section">
+        <img class="avatar" src="[[advertiserData.avatar]]" alt="">
+      </div>
+      <div class="info-section">
+        <h3>[[advertiserData.name]]</h3>
+        <p class="paragraph-lil-margin">[[advertiserData.description]]</p>
+        <p class="gray-text small-text">[[advertiserData.address]]</p>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    class HemeakiAdvertiserCard extends Polymer.Element {
+
+      static get is() {
+        return 'hemeaki-advertiser-card';
+      }
+
+      static get properties() {
+        return {
+          advertiserData: Object
+        };
+      }
+
+    }
+
+    window.customElements.define(HemeakiAdvertiserCard.is, HemeakiAdvertiserCard);
+  </script>
+</dom-module>

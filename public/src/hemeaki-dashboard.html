@@ -1,0 +1,92 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="hemeaki-admin-add-advertisers.html">
+<link rel="import" href="hemeaki-admin-advertisers.html">
+<link rel="import" href="hemeaki-admin-categories.html">
+<link rel="import" href="hemeaki-admin-contacts.html">
+
+<dom-module id="hemeaki-dashboard">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      .panel-space {
+        display: grid;
+        grid-template-columns: 230px 1fr;
+      }
+
+      .panel-box {
+        padding-left: 20px;
+      }
+
+      .gray-btn {
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-weight: bold;
+      }
+
+      .side-menu {
+        margin-right: 20px;
+      }
+
+      @media screen and (max-width: 600px) {
+        .panel-space {
+          grid-template-columns: 1fr;
+        }
+
+        .panel-box {
+          padding-left: 0;
+          margin-top: 30px;
+        }
+
+        .side-menu {
+          margin-right: 0;
+        }
+      }
+    </style>
+
+    <div class="dashboard-container">
+      <div class="container">
+        <h1>Panel de administrador</h1>
+        <div class="panel-space">
+          <div class="side-menu">
+            <iron-selector attr-for-selected="name" selected="{{selectedTab}}">
+              <paper-button class="gray-btn full-btn" name="contacts">Bandeja de contactos</paper-button> <br>
+              <paper-button class="gray-btn full-btn" name="advertisers">Lista de anunciantes</paper-button> <br>
+              <paper-button class="gray-btn full-btn" name="categories">Lista de categorías</paper-button> <br>
+              <paper-button class="gray-btn full-btn" name="add-advertisers">Añadir anunciante</paper-button>
+            </iron-selector>
+          </div>
+          <div class="panel-box">
+            <iron-pages attr-for-selected="name" selected="{{selectedTab}}" fallback-selection="categories">
+              <hemeaki-admin-add-advertisers name="add-advertisers"></hemeaki-admin-add-advertisers>
+              <hemeaki-admin-add-categories name="add-categories"></hemeaki-admin-add-categories>
+              <hemeaki-admin-advertisers name="advertisers" advertisers="[[advertisers]]"></hemeaki-admin-advertisers>
+              <hemeaki-admin-categories name="categories" categories="[[categories]]"></hemeaki-admin-categories>
+              <hemeaki-admin-contacts name="contacts"></hemeaki-admin-contacts>
+            </iron-pages>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    class HemeakiDashboard extends Polymer.Element {
+      static get is() {
+        return 'hemeaki-dashboard';
+      }
+
+      static get properties() {
+        return {
+          categories: Array,
+
+          advertisers: Array
+        };
+      }
+    }
+    window.customElements.define(HemeakiDashboard.is, HemeakiDashboard);
+  </script>
+</dom-module>
