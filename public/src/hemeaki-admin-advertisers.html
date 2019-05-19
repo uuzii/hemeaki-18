@@ -98,8 +98,9 @@
                 <paper-input label="Descripción" value="{{formData.description}}"></paper-input>
                 <paper-input label="Email" value="{{formData.email}}"></paper-input>
                 <paper-input label ="Teléfono" allowed-pattern="[0-9- ]" value="{{formData.tel}}"></paper-input>
-                <address-autocomplete id="address" api-key="AIzaSyBo5GkfGaDY3Vfhz-nMwf4oWemPj6uUdUQ"></address-autocomplete>
-                <paper-input label="Fecebook" value="{{formData.facebookName}}"></paper-input>
+                <paper-input label ="Dirección" value="{{formData.address}}"></paper-input>
+                <paper-input label ="Link Google Maps" value="{{formData.parsedAddress}}"></paper-input>
+                <paper-input label="Nombre en Facebook" value="{{formData.facebookName}}"></paper-input>
                 <paper-input label="Facebook ID" value="{{formData.facebookId}}"></paper-input>
 
                 <paper-dropdown-menu label="Categoría" value="{{formData.slugCategory}}">
@@ -256,8 +257,6 @@
       _setReqBody() {
         var form = this.formData;
         this.set('formData.slug', this.quitAccents(form.name));
-        this.set('formData.parsedAddress', this.shadowRoot.querySelector('#address').direccion.replace(new RegExp(/\s/g), "+"));
-        this.set('formData.address', this.shadowRoot.querySelector('#address').direccion);
         this.set('formData.background', `${this.bannerUrl}, ${this.promoUrl}`);
         this.set('formData.slugCategory', this.quitAccents(form.slugCategory));
         this.set('formData.tags', this.shadowRoot.querySelector('#tags').values.toString());
