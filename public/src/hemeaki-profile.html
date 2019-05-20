@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="hemeaki-rating-input.html">
+<link rel="import" href="../bower_components/photo-gallery/photo-gallery.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 
 <dom-module id="hemeaki-profile">
@@ -102,6 +103,11 @@
         background-color: #0084FF;
       }
 
+      .custom-img {
+        width: 100%;
+        height: 600px;
+      }
+
       @media screen and (max-width: 600px) {
         .info-section {
           display: grid;
@@ -152,6 +158,11 @@
           display: none;
           padding-top: 0;
         }
+
+        .custom-img {
+          width: 100%;
+          height: 250px;
+        }
       }
     </style>
 
@@ -168,7 +179,7 @@
           <iron-image
             fade
             width="200" height="200"
-            placeholder="../assets/avatar-placeholder.png"
+            placeholder="assets/avatar-placeholder.png"
             position="left"
             preload sizing="contain"
             src="[[advertiser.avatar]]"></iron-image>
@@ -208,6 +219,7 @@
                 <p class="no-margin">[[advertiser.tel]]</p>
               </div>
               <div class="info-item-icon">
+                <input hidden type="text" id="myTel" value$="[[advertiser.tel]]">
                 <paper-icon-button icon="hemeaki-iconset:whatsapp" on-tap="copyPhoneNumber"></paper-icon-button>
               </div>
             </div>
@@ -277,8 +289,10 @@
 
       <div class="banner-section container">
         <h3>Publicidad</h3>
-        <img class="banners" src="[[banner]]" alt="[[advertiser.name]] banner">
-        <img class="banners" src="[[promo]]" alt="[[advertiser.name]] promo">
+        <photo-gallery>
+          <div class="item custom-img" style$="background-image: url('[[banner]]');" data-url$='[[banner]]'></div>
+          <div class="item custom-img" style$="background-image: url('[[promo]]');" data-url$='[[promo]]'></div>
+        </photo-gallery>
       </div>
     </div>
 
@@ -286,23 +300,34 @@
       <p class="paragraphs center">Compartir</p>
       <div class="toast-container">
         <div class="toast-item">
-          <div><paper-icon-button class="toast-buttons" icon="hemeaki-icons:facebook"></paper-icon-button></div>
+          <div>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=https://hemeaki.com/">
+              <paper-icon-button class="toast-buttons" icon="hemeaki-icons:facebook"></paper-icon-button>
+            </a>
+          </div>
           <div>Facebook</div>
         </div>
 
         <div class="toast-item">
-          <div><paper-icon-button class="toast-buttons" icon="hemeaki-iconset:whatsapp"></paper-icon-button></div>
+          <div>
+            <a href="whatsapp://send?text=https://hemeaki.com/">
+              <paper-icon-button class="toast-buttons" icon="hemeaki-iconset:whatsapp"></paper-icon-button>
+            </a>
+          </div>
           <div>WhatsApp</div>
         </div>
 
         <div class="toast-item">
-          <div><paper-icon-button class="toast-buttons" icon="content-copy"></paper-icon-button></div>
+          <input hidden type="text" id="myText" value="https://hemeaki.com/">
+          <div><paper-icon-button class="toast-buttons" icon="content-copy" on-tap="copyToClipboard"></paper-icon-button></div>
           <div>Copiar Link</div>
         </div>
       </div>
     </paper-toast>
 
     <paper-toast id="numbertoast" text="Número copiado"></paper-toast>
+
+    <paper-toast id="texttoast" text="Texto copiado"></paper-toast>
 
     <a href="https://www.fb.com/msg/[[advertiser.facebookId]]">
       <paper-fab icon="hemeaki-icons:messenger"></paper-fab>
@@ -378,6 +403,10 @@
         return r;
       }
 
+      toUrl(s) {
+        return s.replace(new RegExp(/\s/g), "%20");
+      }
+
       _computeMargin(index) {
         return index % 2 === 0 ? 'even-margin' : 'odd-margin';
       }
@@ -387,10 +416,17 @@
       }
 
       copyPhoneNumber() {
-        let text = this.advertiser.tel;
-        text.select();
+        let copyText = this.$.myTel;
+        copyText.select();
         document.execCommand("Copy");
         this.$.numbertoast.open();
+      }
+
+      copyToClipboard() {
+        let copyText = this.$.myText;
+        copyText.select();
+        document.execCommand("Copy");
+        this.$.texttoast.open();
       }
 
       _computeBanner(adData) {

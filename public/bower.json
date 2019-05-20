@@ -28,7 +28,8 @@
     "web-animations-js": "^2.3.1",
     "iron-star-rating": "chadweimer/iron-star-rating#^2.0.0",
     "paper-dialog": "PolymerElements/paper-dialog#^2.0.0",
-    "paper-fab": "PolymerElements/paper-fab#^2.0.0"
+    "paper-fab": "PolymerElements/paper-fab#^2.0.0",
+    "photo-gallery": "supachailllpay/photo-gallery#^2.0.5"
   },
   "devDependencies": {
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"

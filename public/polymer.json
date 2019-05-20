@@ -1,0 +1,38 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/hemeaki-app.html",
+  "fragments": [
+    "src/hemeaki-about.html",
+    "src/hemeaki-contact.html",
+    "src/hemeaki-dashboard.html",
+    "src/hemeaki-home.html",
+    "src/hemeaki-list.html",
+    "src/hemeaki-login.html",
+    "src/hemeaki-profile.html",
+    "src/hemeaki-search.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "assets/**/*",
+    "bower.json"
+  ],
+  "extraDependencies": [
+    "bower_components/webcomponentsjs/*"
+  ],
+  "lint": {
+    "rules": ["polymer-2-hybrid"]
+  },
+  "builds": [
+    {
+      "js": {
+        "minify": true
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      }
+    }
+  ]
+}

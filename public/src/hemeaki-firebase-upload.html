@@ -17,7 +17,7 @@
         height="[[imageHeight]]"
         src="{{imageUrl}}" 
         preload sizing="cover"
-        placeholder="../assets/user.jpeg"></iron-image>
+        placeholder="assets/user.jpeg"></iron-image>
 
       <dom-if if="[[showLoader]]">
         <template>
@@ -84,7 +84,7 @@
           // Delete the file
           dinnerRef.delete().then(() => {
             console.log('Borrado con éxito');
-            this.imageUrl = '../assets/user.jpeg';
+            this.imageUrl = 'assets/user.jpeg';
           }).catch(function (error) {
             console.log('Uh-oh, an error occurred!');
           });

@@ -29,6 +29,10 @@
         margin-right: 20px;
       }
 
+      .loggued-in-msg {
+        margin-top: 32px;
+      }
+
       @media screen and (max-width: 600px) {
         .panel-space {
           grid-template-columns: 1fr;
@@ -47,24 +51,34 @@
 
     <div class="dashboard-container">
       <div class="container">
-        <h1>Panel de administrador</h1>
-        <div class="panel-space">
-          <div class="side-menu center">
-            <iron-selector attr-for-selected="name" selected="{{selectedTab}}">
-              <paper-button class="gray-btn full-btn" name="contacts">Bandeja de contactos</paper-button> <br>
-              <paper-button class="gray-btn full-btn" name="advertisers">Lista de anunciantes</paper-button> <br>
-              <paper-button class="gray-btn full-btn" name="categories">Lista de categorías</paper-button>
-            </iron-selector>
-            <paper-button class="red-text" on-tap="logout">Cerrar sesión</paper-button>
-          </div>
-          <div class="panel-box">
-            <iron-pages attr-for-selected="name" selected="{{selectedTab}}" fallback-selection="contacts">
-              <hemeaki-admin-advertisers name="advertisers" advertisers="[[advertisers]]" categories="[[categories]]"></hemeaki-admin-advertisers>
-              <hemeaki-admin-categories name="categories" categories="[[categories]]"></hemeaki-admin-categories>
-              <hemeaki-admin-contacts name="contacts"></hemeaki-admin-contacts>
-            </iron-pages>
-          </div>
-        </div>
+        <dom-if if="[[_validateLoggedIn()]]">
+          <template>
+            <h1>Panel de administrador</h1>
+            <div class="panel-space">
+              <div class="side-menu center">
+                <iron-selector attr-for-selected="name" selected="{{selectedTab}}">
+                  <paper-button class="gray-btn full-btn" name="contacts">Bandeja de contactos</paper-button> <br>
+                  <paper-button class="gray-btn full-btn" name="advertisers">Lista de anunciantes</paper-button> <br>
+                  <paper-button class="gray-btn full-btn" name="categories">Lista de categorías</paper-button>
+                </iron-selector>
+                <paper-button class="red-text" on-tap="logout">Cerrar sesión</paper-button>
+              </div>
+              <div class="panel-box">
+                <iron-pages attr-for-selected="name" selected="{{selectedTab}}" fallback-selection="contacts">
+                  <hemeaki-admin-advertisers name="advertisers" advertisers="[[advertisers]]" categories="[[categories]]"></hemeaki-admin-advertisers>
+                  <hemeaki-admin-categories name="categories" categories="[[categories]]"></hemeaki-admin-categories>
+                  <hemeaki-admin-contacts name="contacts"></hemeaki-admin-contacts>
+                </iron-pages>
+              </div>
+            </div>
+          </template>
+        </dom-if>
+
+        <dom-if if="[[!_validateLoggedIn()]]">
+          <template>
+            <p class="center loggued-in-msg"><a href="/#/login" class="red-text">Inicia sesión</a> para adminsitrar los recursos del sitio</p>
+          </template>
+        </dom-if>
       </div>
     </div>
 
@@ -86,8 +100,15 @@
 
       logout() {
         window.localStorage.removeItem('hemeakiLoggedinn');
+        window.localStorage.removeItem('hemeakiUserName');
+        window.localStorage.removeItem('hemeakiUserToken');
         window.location = '/#/inicio';
         window.location.reload();
+      }
+
+      _validateLoggedIn() {
+        let loggedin = window.localStorage.getItem('hemeakiLoggedinn');
+        return loggedin;
       }
     }
     window.customElements.define(HemeakiDashboard.is, HemeakiDashboard);

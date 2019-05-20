@@ -153,7 +153,7 @@
       <div class="navbar-container-controls">
         <div class="navbar-controls-logobox flex-centered">
           <a href="/#/inicio">
-            <img src="../assets/logo.png" class="navbar-logo side-padding" alt="logo hemeaki">
+            <img src="assets/logo.png" class="navbar-logo side-padding" alt="logo hemeaki">
           </a>
         </div>
 
@@ -283,6 +283,8 @@
 
       logout() {
         window.localStorage.removeItem('hemeakiLoggedinn');
+        window.localStorage.removeItem('hemeakiUserName');
+        window.localStorage.removeItem('hemeakiUserToken');
         window.location = '/#/inicio';
         window.location.reload();
       }
